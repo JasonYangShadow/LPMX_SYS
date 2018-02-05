@@ -10,21 +10,6 @@
 #include "lpm.h"
 #include "log.h"
 #include "hmappriv.h"
-#include "hashmap.h"
-#include "ipc_rcv.h"
-
-hmap_t* GLOBAL_HMAP = NULL;
-
-void __attribute__((constructor)) init();
-void __attribute__((destructor)) uninit();
-
-void init(){
-  init_map(GLOBAL_HMAP);
-}
-
-void uninit(){
-  destroy_hmap(GLOBAL_HMAP);
-}
 
 static void lpm_log_rename(const char* oldpath, const char* newpath)
 {
@@ -137,8 +122,6 @@ static void lpm_init(){
     FUNC_DLSYM (mkdirat) 
 
     FUNC_DLSYM (openat64)
-    
-    data_rcv(GLOBAL_HMAP);
 }
 
 /**System Hooks implementation*/
@@ -153,6 +136,14 @@ int open(const char* path, int flags, ...)
 		return __open(path, flags);
 
 	lpm_init();
+
+	
+    char abs_path[128];
+    lpm_abs_path(-1,path,abs_path);
+    if(!mem_priv_check(abs_path)){
+        log_fatal("[DENIED]open %s is not allowed",abs_path);
+        exit(EXIT_FAILURE);
+    }
 	
 	va_start(a, flags);
 	mode = va_arg(a, int);
@@ -288,11 +279,6 @@ int open64(const char* path, int flags, ...)
 		return __open64(path, flags);
 
 	lpm_init();
-	
-    char abs_path[128];
-    lpm_abs_path(-1,path,abs_path);
-    log_debug("--------------%s-------------",GLOBAL_HMAP);
-    privilege_check(GLOBAL_HMAP,abs_path);
     
 	va_start(a, flags);
 	mode = va_arg(a, int);

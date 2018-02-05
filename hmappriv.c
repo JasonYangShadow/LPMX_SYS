@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "log.h"
 #include "hashmap.h"
+#include "memcached_client.h"
 
 bool hmap_check(hmap_t* pmap, const char* container,const char* pname,const char* abs_path){
    char* allow_data = (char*)get_complex_hmap(pmap,container, pname, "ALLOW_LIST");
@@ -42,9 +43,35 @@ void get_process_info(struct ProcessInfo* pinfo){
   fclose(fp);
 }
 
-bool privilege_check(hmap_t* pmap, const char* abs_path){
+bool hmap_priv_check(hmap_t* pmap, const char* abs_path){
     //local check
     struct ProcessInfo pinfo;
     get_process_info(&pinfo);
     return hmap_check(pmap,"container",pinfo.pname,abs_path);
+}
+
+bool mem_check(const char* container, const char* pname, const char* abs_path){
+   char allow_key[MEMCACHED_MAX_EKY];
+   sprintf(allow_key,"%s:%s:allow",container,pname);
+   char* value = getValue(allow_key);
+   if(value){
+       char* valret = NULL;
+       char* rest = value;
+       char* token = NULL;
+
+       while((token = strtok_r(rest,";",&rest))){
+           if((valret = strstr(abs_path, token))){
+               return true;
+           }else{
+               return false;
+           }
+       }
+   }
+   return false;
+}
+
+bool mem_priv_check(const char* abs_path){
+    struct ProcessInfo pinfo;
+    get_process_info(&pinfo);
+    return mem_check("container",pinfo.pname,abs_path);
 }

@@ -13,7 +13,8 @@ struct ProcessInfo{
     char pname[PNAME_SIZE];
 };
 
-bool privilege_check(hmap_t* pmap, const char* abs_path);
+bool hmap_priv_check(hmap_t* pmap, const char* abs_path);
+bool mem_priv_check(const char* abs_path);
 #endif
 
 
