@@ -3,8 +3,7 @@
 
 int main(int argc, char const* argv[])
 {
-    hmap_t* pmap;
-    init_map(pmap);
+    hmap_t* pmap = create_hmap(TOP_HMAP_SIZE);
     char top_key[64] = "lever1";
     char second_key[64] = "lever2";
     char third_key[64] = "lever3";

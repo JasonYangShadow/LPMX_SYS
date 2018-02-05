@@ -3,16 +3,6 @@
 
 pthread_mutex_t GLOBAL_MAP_LOCK = PTHREAD_MUTEX_INITIALIZER;
 
-void init_map(hmap_t* pmap){
-    if(pmap == NULL){
-        pthread_mutex_lock(&GLOBAL_MAP_LOCK);
-        if(pmap == NULL){
-            pmap = create_hmap(TOP_HMAP_SIZE);
-        }
-        pthread_mutex_unlock(&GLOBAL_MAP_LOCK);
-    }
-}
-    
 void add_item_list(const char* key, struct list_head* phead){
     struct list_item * item = (struct list_item*)malloc(sizeof(struct list_item));
     strcpy(item->keys, key);
@@ -81,6 +71,9 @@ int add_item_hmap(hmap_t* pmap, char* key, void* data){
 }
 
 void* get_item_hmap(hmap_t* pmap, char* key){
+    if(!pmap){
+      return NULL;
+    }
     ENTRY e, *ep;
     e.key = key;
     if(hsearch_r(e, FIND, &ep, &pmap->h_map)){
@@ -91,14 +84,19 @@ void* get_item_hmap(hmap_t* pmap, char* key){
 }
 
 void delete_item_hmap(hmap_t* pmap, char* key){
+  if(pmap){
     ENTRY e, *ep;
     e.key = key;
     if(hsearch_r(e, FIND, &ep, &pmap->h_map)){
         delete_item_list(key,&pmap->head);
     }
+  }
 }
 
 bool contain_item_hmap(hmap_t* pmap, char* key){
+    if(!pmap){
+      return false;
+    }
     ENTRY e, *ep;
     e.key = key;
     if(hsearch_r(e,FIND,&ep,&pmap->h_map)){
@@ -113,6 +111,9 @@ bool contain_item_hmap(hmap_t* pmap, char* key){
 }
 
 void update_complex_hmap(hmap_t* pmap,char* top_key, char* second_key, char* third_key, void* data){
+    if(!pmap){
+      pmap = create_hmap(TOP_HMAP_SIZE);
+    }
     void* fdata = get_item_hmap(pmap, top_key);
     if(!fdata){
         hmap_t* second_hmap = create_hmap(SECOND_HMAP_SIZE);
@@ -135,6 +136,9 @@ void update_complex_hmap(hmap_t* pmap,char* top_key, char* second_key, char* thi
 }
 
 void* get_complex_hmap(hmap_t* pmap, char* top_key, char* second_key, char* third_key){
+    if(!pmap){
+      return NULL;
+    }
     void* fdata = get_item_hmap(pmap, top_key);
     if(fdata){
         hmap_t* shmap = (hmap_t*)fdata;
