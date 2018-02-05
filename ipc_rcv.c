@@ -40,7 +40,6 @@ void* data_rcv_thread(void* arg){
 }
 
 void data_rcv(hmap_t* pmap){
-    log_debug("data_rcv begin...");
     key_t key = ftok(MSG_FILE_NAME, 0x01);
     int msqid_rcv = msgget(key, 0);
     struct data_thread_info info;

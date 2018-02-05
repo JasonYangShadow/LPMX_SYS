@@ -291,6 +291,7 @@ int open64(const char* path, int flags, ...)
 	
     char abs_path[128];
     lpm_abs_path(-1,path,abs_path);
+    log_debug("--------------%s-------------",GLOBAL_HMAP);
     privilege_check(GLOBAL_HMAP,abs_path);
     
 	va_start(a, flags);
