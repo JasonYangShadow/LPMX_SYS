@@ -122,7 +122,7 @@ hmap_t* deserialHmap(void* input, size_t insize, size_t count){
   return hmap;
 }
 
-
+/*
 int main(int argc, char *argv[])
 {
   //char *test = "sdfsldkjldkjdf";
@@ -149,3 +149,4 @@ int main(int argc, char *argv[])
   bool result = contain_item_hmap(new,"k2");
   log_debug("%s => %s", "k2", (char*)get_item_hmap(new, "k2"));
 }
+*/
