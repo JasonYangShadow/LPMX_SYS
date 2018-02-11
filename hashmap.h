@@ -42,9 +42,4 @@ int add_item_hmap(hmap_t* pmap, char* key, void* data);
 void* get_item_hmap(hmap_t* pmap, char* key);
 void delete_item_hmap(hmap_t* pmap,char* key);
 bool contain_item_hmap(hmap_t* pmap,char* key);
-
-void update_complex_hmap(hmap_t* pmap, char* top_key, char* second_key, char* third_key, void* data);
-void* get_complex_hmap(hmap_t* pmap, char* top_key, char* second_key, char* third_key);
-
-void init_map(hmap_t* pmap);
 #endif

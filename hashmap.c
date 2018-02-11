@@ -1,8 +1,6 @@
 #include "hashmap.h"
 #include "log.h"
 
-pthread_mutex_t GLOBAL_MAP_LOCK = PTHREAD_MUTEX_INITIALIZER;
-
 void add_item_list(const char* key, struct list_head* phead){
     struct list_item * item = (struct list_item*)malloc(sizeof(struct list_item));
     strcpy(item->keys, key);
@@ -28,7 +26,7 @@ bool find_item_list(const char* key, struct list_head* phead){
             if(strcmp(pitem->keys, key) == 0){
                 return true;
             }else{
-                return false;
+                continue;
             }
         }
     }
@@ -46,6 +44,7 @@ void clear_item_list(struct list_head* phead){
 hmap_t* create_hmap(size_t h_max_size){
     hmap_t* pmap = (hmap_t*)malloc(sizeof(hmap_t));
     pmap->h_max_size = h_max_size;
+    memset(&pmap->h_map,0,sizeof(pmap->h_map));
     hcreate_r(h_max_size,&pmap->h_map);
     LIST_INIT(&pmap->head.head);
     return pmap;
@@ -110,60 +109,15 @@ bool contain_item_hmap(hmap_t* pmap, char* key){
     }
 }
 
-void update_complex_hmap(hmap_t* pmap,char* top_key, char* second_key, char* third_key, void* data){
-    if(!pmap){
-      pmap = create_hmap(TOP_HMAP_SIZE);
-    }
-    void* fdata = get_item_hmap(pmap, top_key);
-    if(!fdata){
-        hmap_t* second_hmap = create_hmap(SECOND_HMAP_SIZE);
-        hmap_t* third_hmap = create_hmap(THIRD_HMAP_SIZE);
-        add_item_hmap(third_hmap, third_key, data);
-        add_item_hmap(second_hmap, second_key, (void*)third_hmap);
-        add_item_hmap(pmap, top_key, (void*)second_hmap);
-    }else{
-        hmap_t* second_hmap = (hmap_t *)fdata;
-        void* sdata = get_item_hmap(second_hmap, second_key);
-        if(!sdata){
-            hmap_t* third_hmap = create_hmap(THIRD_HMAP_SIZE);
-            add_item_hmap(third_hmap, third_key, data);
-            add_item_hmap(second_hmap, second_key, (void*)third_hmap);
-        }else{
-            hmap_t* third_hmap = (hmap_t*)sdata;
-            add_item_hmap(third_hmap, second_key, data);
-        }
-    }
-}
-
-void* get_complex_hmap(hmap_t* pmap, char* top_key, char* second_key, char* third_key){
-    if(!pmap){
-      return NULL;
-    }
-    void* fdata = get_item_hmap(pmap, top_key);
-    if(fdata){
-        hmap_t* shmap = (hmap_t*)fdata;
-        void* sdata = get_item_hmap(shmap, second_key);
-        if(sdata){
-            hmap_t* thmap = (hmap_t*)sdata;
-            void* data = get_item_hmap(thmap, third_key);
-            if(data){
-                return data;
-            }
-        }
-    }
-    return NULL;
-}
-
-/*int main(void)
+/*
+int main(void)
 {
-    char top_key[64] = "lever1";
-    char second_key[64] = "lever2";
-    char third_key[64] = "lever3";
+    char key[64] = "lever1";
     char data[64] = "data";
-    update_complex_hmap(top_key, second_key,third_key, data);
 
-    printf("data:%s\n",(char*)get_complex_hmap(top_key,second_key,third_key));
-    printf("contain top_key:%s,? %d\n",top_key,contain_item_hmap(GLOBAL_HMAP,top_key));
-    printf("contain other top_key:%s,? %d\n",data,contain_item_hmap(GLOBAL_HMAP,data));
+    hmap_t* pmap = create_hmap(64);
+    add_item_hmap(pmap, key, data);
+    log_debug("key: %s => value: %s",key,(char*)get_item_hmap(pmap, key));
     return 0;
-}*/
+}
+*/

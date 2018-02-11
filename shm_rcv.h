@@ -2,6 +2,5 @@
 #define __SHM_RCV_H
 #include "shm.h"
 
-
-hmap_t* shm_get();
+void shm_get(void* data, size_t size);
 #endif
