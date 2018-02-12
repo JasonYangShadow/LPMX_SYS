@@ -7,7 +7,9 @@
 #include "memcached_client.h"
 
 bool hmap_check(hmap_t* pmap, const char* container,const char* pname,const char* abs_path){
-   char* allow_data = (char*)get_complex_hmap(pmap,container, pname, "ALLOW_LIST");
+   char key[KEY_SIZE];
+   sprintf(key,"%s:%s:ALLOW_LIST", container, pname);
+   char* allow_data = (char*)get_item_hmap(pmap, key);
    log_debug("allow_data: %s",allow_data);
    if(allow_data){
       char* valret = NULL;

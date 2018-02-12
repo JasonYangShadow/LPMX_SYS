@@ -11,10 +11,7 @@
 #define __USE_GNU 1
 #include <search.h>
 
-#define KEY_SIZE 32
-#define TOP_HMAP_SIZE 64
-#define SECOND_HMAP_SIZE 1024
-#define THIRD_HMAP_SIZE 3
+#define KEY_SIZE 256
 
 struct list_item{
     char keys[KEY_SIZE];
