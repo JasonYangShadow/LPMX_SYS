@@ -3,7 +3,6 @@
 #include <libmemcached/memcached.h>
 #define MEM_SERVER "localhost"
 #define MEM_PORT 11211
-#define MEMCACHED_MAX_EKY 256
 
 char* getValue(const char* key);
 bool setValue(char* key, char* value);

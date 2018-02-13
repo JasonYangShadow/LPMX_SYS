@@ -132,7 +132,7 @@ int open(const char* path, int flags, ...){
 
 	lpm_init();
 	
-  char abs_path[128];
+  char abs_path[PATH_BUF_SIZE];
   lpm_abs_path(-1,path,abs_path);
   if(!mem_priv_check(abs_path)){
       log_fatal("[DENIED]open %s is not allowed",abs_path);
@@ -142,7 +142,6 @@ int open(const char* path, int flags, ...){
 	va_start(a, flags);
 	mode = va_arg(a, int);
 	va_end(a);
-	
 	if ((ret = libc_open(path, flags, mode)) != -1) {
 		accmode = flags & O_ACCMODE;
 		if (accmode == O_WRONLY || accmode == O_RDWR)

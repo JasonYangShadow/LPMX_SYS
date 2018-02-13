@@ -53,7 +53,7 @@ bool hmap_priv_check(hmap_t* pmap, const char* abs_path){
 }
 
 bool mem_check(const char* container, const char* pname, const char* abs_path){
-   char allow_key[MEMCACHED_MAX_EKY];
+   char allow_key[MEMCACHED_MAX_KEY];
    sprintf(allow_key,"%s:%s:allow",container,pname);
    char* value = getValue(allow_key);
    if(value){
